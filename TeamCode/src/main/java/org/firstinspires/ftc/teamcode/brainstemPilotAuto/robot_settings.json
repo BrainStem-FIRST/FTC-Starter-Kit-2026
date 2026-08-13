@@ -1,0 +1,8 @@
+{
+  "width": 18,
+  "length": 18,
+  "maxVel": 60,
+  "maxAccel": 40,
+  "unit": "in",
+  "subsystems": []
+}

@@ -1,4 +1,8 @@
 apply plugin: 'com.android.application'
+// Adds the deploySloth task, which pushes only your OpModes to the robot
+// instead of reinstalling the whole APK. Version is declared in the root
+// build.gradle plugins block.
+apply plugin: 'dev.frozenmilk.sinister.sloth.load'
 
 //
 // build.gradle in TeamCode
@@ -22,8 +26,62 @@ android {
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
+
+    // Overrides build.common.gradle's Java 8 / API 30 defaults. PathFollowerUtils
+    // uses a record, which needs Java 16+ syntax and a compileSdk whose stub jar
+    // contains java.lang.Record (API 34+). Only affects the language level of
+    // TeamCode's own code, not the API level the robot actually runs.
+    compileSdkVersion 34
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
+
+    // Sloth hot reload runtime. Must be on the app that gets installed.
+    implementation 'dev.frozenmilk.sinister:Sloth:0.2.4'
+
+    // FTC Dashboard, via the Slothboard fork: a drop-in replacement that also
+    // hot-reloads @Config fields and OpModes. Do not also add
+    // com.acmerobotics.dashboard:dashboard - the two clash at package level.
+    implementation 'com.acmerobotics.slothboard:dashboard:0.2.4+0.5.1'
+
+    // Panels, via the Sloth build. This already pulls in a Sloth-compatible
+    // com.bylazar.sloth:telemetry, so don't add com.bylazar:telemetry directly.
+    implementation 'com.bylazar.sloth:fullpanels:0.2.4.1+1.0.12'
+
+    // Road Runner, used for its geometry/Action types by the Bezier follower and
+    // Brainstem Pilot. The dashboard exclusions keep it from dragging in the
+    // vanilla FTC Dashboard alongside the Slothboard fork above.
+    implementation('com.acmerobotics.roadrunner:ftc:0.1.25') {
+        exclude group: 'com.acmerobotics.dashboard'
+    }
+    implementation('com.acmerobotics.roadrunner:actions:1.0.1') {
+        exclude group: 'com.acmerobotics.dashboard'
+    }
+    implementation 'com.acmerobotics.roadrunner:core:1.0.1'
+
+    // Parses the Brainstem Pilot path/skeleton/variant JSON.
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.5'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.5'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.5'
+}
+
+// Brainstem Pilot's JSON lives next to the Java it describes so the Pilot UI can
+// edit both in one place, but PilotAssetLoader reads it out of the APK's assets
+// at runtime. Mirror it across before every build.
+tasks.register('syncBrainstemPilotAssets', Sync) {
+    from('src/main/java/org/firstinspires/ftc/teamcode/brainstemPilotAuto') {
+        exclude 'opmodeAutos/**'
+        exclude '**/*.java'
+    }
+    into 'src/main/assets/brainstemPilotAuto'
+}
+
+tasks.named('preBuild') {
+    dependsOn tasks.named('syncBrainstemPilotAssets')
 }

@@ -3,6 +3,8 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        // Dairy Foundation: hosts the Sloth hot-reload Gradle plugin (dev.frozenmilk:Load).
+        maven { url = 'https://repo.dairy.foundation/releases' }
     }
 }
 

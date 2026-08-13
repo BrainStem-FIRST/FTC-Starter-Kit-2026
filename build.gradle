@@ -15,6 +15,8 @@ plugins {
     // Note for FTC Teams: Do not modify this yourself.
     id 'com.android.application' version '8.13.2' apply false
     id 'com.android.library' version '8.13.2' apply false
+    // Sloth hot reload. Applied only in TeamCode/build.gradle.
+    id 'dev.frozenmilk.sinister.sloth.load' version '0.2.4' apply false
 }
 
 // This is now required because aapt2 has to be downloaded from the
@@ -23,6 +25,10 @@ allprojects {
     repositories {
         mavenCentral()
         google()
+        // Sloth, Slothboard (FTC Dashboard fork) and the Sloth build of Panels.
+        maven { url = 'https://repo.dairy.foundation/releases' }
+        // Road Runner.
+        maven { url = 'https://maven.brott.dev/' }
     }
 }
 

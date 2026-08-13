@@ -1,0 +1,35 @@
+{
+  "id": "Path_1",
+  "name": "Example Path",
+  "waypoints": [
+    {
+      "x": -37.3361,
+      "y": 62.1138,
+      "prevControl": null,
+      "nextControl": {
+        "x": -13.1242,
+        "y": 40.1647
+      },
+      "rotation": -90
+    },
+    {
+      "x": -16.7447,
+      "y": 15.9527,
+      "prevControl": {
+        "x": -10.1826,
+        "y": 31.1135
+      },
+      "nextControl": null,
+      "rotation": 134.9688
+    }
+  ],
+  "constraints": {},
+  "subsystemTriggers": [],
+  "rotationTargets": [],
+  "coordinateSystem": "pedro-center",
+  "units": "in",
+  "headingUnit": "deg",
+  "speedUnit": "in/s",
+  "accelUnit": "in/s²",
+  "waypointParams": {}
+}

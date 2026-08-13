@@ -1,0 +1,19 @@
+{
+  "id": "Example_Skeleton_Auto",
+  "created_date": "2026-08-12T22:33:00.313Z",
+  "updated_date": "2026-08-12T22:33:00.313Z",
+  "name": "Example Skeleton Auto",
+  "commands": [
+    {
+      "id": "cmd-1786573945662-l0mca",
+      "type": "path",
+      "label": "Example Path"
+    },
+    {
+      "id": "cmd-1786573946843-19k19",
+      "type": "wait",
+      "label": "Example Wait",
+      "defaultWait": 0
+    }
+  ]
+}
