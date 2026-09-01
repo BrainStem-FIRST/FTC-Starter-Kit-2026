@@ -1,22 +1,5 @@
 apply plugin: 'com.android.application'
-// Adds the deploySloth task, which pushes only your OpModes to the robot
-// instead of reinstalling the whole APK. Version is declared in the root
-// build.gradle plugins block.
 apply plugin: 'dev.frozenmilk.sinister.sloth.load'
-
-//
-// build.gradle in TeamCode
-//
-// Most of the definitions for building your module reside in a common, shared
-// file 'build.common.gradle'. Being factored in this way makes it easier to
-// integrate updates to the FTC into your code. If you really need to customize
-// the build definitions, you can place those customizations in this file, but
-// please think carefully as to whether such customizations are really necessary
-// before doing so.
-
-// Custom definitions may go here
-
-// Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
@@ -27,10 +10,6 @@ android {
         jniLibs.useLegacyPackaging true
     }
 
-    // Overrides build.common.gradle's Java 8 / API 30 defaults. PathFollowerUtils
-    // uses a record, which needs Java 16+ syntax and a compileSdk whose stub jar
-    // contains java.lang.Record (API 34+). Only affects the language level of
-    // TeamCode's own code, not the API level the robot actually runs.
     compileSdkVersion 34
 
     compileOptions {
@@ -54,18 +33,18 @@ dependencies {
     // Sloth hot reload runtime. Must be on the app that gets installed.
     implementation 'dev.frozenmilk.sinister:Sloth:0.2.4'
 
-    // FTC Dashboard, via the Slothboard fork: a drop-in replacement that also
-    // hot-reloads @Config fields and OpModes. Do not also add
-    // com.acmerobotics.dashboard:dashboard - the two clash at package level.
+    /* FTC Dashboard, via the Slothboard fork: a drop-in replacement that also
+     hot-reloads @Config fields and OpModes. Do not also add
+     com.acmerobotics.dashboard:dashboard - the two clash at package level. */
     implementation 'com.acmerobotics.slothboard:dashboard:0.2.4+0.5.1'
 
-    // Panels, via the Sloth build. This already pulls in a Sloth-compatible
-    // com.bylazar.sloth:telemetry, so don't add com.bylazar:telemetry directly.
+    /* Panels, via the Sloth build. This already pulls in a Sloth-compatible
+    com.bylazar.sloth:telemetry, so don't add com.bylazar:telemetry directly. */
     implementation 'com.bylazar.sloth:fullpanels:0.2.4.1+1.0.12'
 
-    // Road Runner, used for its geometry/Action types by the Bezier follower and
-    // Brainstem Pilot. The dashboard exclusions keep it from dragging in the
-    // vanilla FTC Dashboard alongside the Slothboard fork above.
+    /* Road Runner, used for its geometry/Action types by the Bezier follower and
+    BrainSTEM Pilot. The dashboard exclusions keep it from dragging in the
+    vanilla FTC Dashboard alongside the Slothboard fork above. */
     implementation('com.acmerobotics.roadrunner:ftc:0.1.25') {
         exclude group: 'com.acmerobotics.dashboard'
     }
@@ -74,21 +53,21 @@ dependencies {
     }
     implementation 'com.acmerobotics.roadrunner:core:1.0.1'
 
-    // Parses the Brainstem Pilot path/skeleton/variant JSON.
+    // Parses the BrainSTEM Pilot path/skeleton/variant JSON.
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.5'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.5'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.5'
 
-    // Brainstem Pilot Library. Exclude vanilla Dashboard so it does not clash
+    // BrainSTEM Pilot Library. Exclude vanilla Dashboard so it does not clash
     // with the Slothboard fork declared above.
     implementation('org.brainstemfirst:pilot-ftc:0.1.0-SNAPSHOT') {
         exclude group: 'com.acmerobotics.dashboard'
     }
 }
 
-// Brainstem Pilot's JSON lives next to the Java it describes so the Pilot UI can
-// edit both in one place, but PilotAssetLoader reads it out of the APK's assets
-// at runtime. Mirror it across before every build.
+/* BrainSTEM Pilot's JSON lives next to the Java it describes so the Pilot UI can
+edit both in one place, but PilotAssetLoader reads it out of the APK's assets
+at runtime. Mirror it across before every build. */
 tasks.register('syncBrainstemPilotAssets', Sync) {
     from('src/main/java/org/firstinspires/ftc/teamcode/brainstemPilotAuto') {
         exclude 'opmodeAutos/**'

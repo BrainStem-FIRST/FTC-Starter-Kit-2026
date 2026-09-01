@@ -1,5 +1,7 @@
 {
+  "schemaVersion": 2,
   "id": "Path_1",
+  "created_date": "2026-09-01T01:54:34.738Z",
   "name": "Example Path",
   "waypoints": [
     {
@@ -13,23 +15,26 @@
       "rotation": -90
     },
     {
-      "x": -16.7447,
-      "y": 15.9527,
+      "x": -16.7553,
+      "y": 16.2766,
       "prevControl": {
-        "x": -10.1826,
-        "y": 31.1135
+        "x": -10.1932,
+        "y": 31.4374
       },
       "nextControl": null,
       "rotation": 134.9688
     }
   ],
-  "constraints": {},
+  "constraints": {
+    "maxVel": 60,
+    "maxAccel": 40,
+    "usingDefaults": true
+  },
   "subsystemTriggers": [],
   "rotationTargets": [],
   "coordinateSystem": "pedro-center",
   "units": "in",
   "headingUnit": "deg",
   "speedUnit": "in/s",
-  "accelUnit": "in/s²",
-  "waypointParams": {}
+  "accelUnit": "in/s²"
 }
