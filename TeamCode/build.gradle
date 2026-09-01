@@ -39,6 +39,15 @@ android {
     }
 }
 
+repositories {
+    mavenLocal()
+    mavenCentral()
+    google()
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
 
@@ -69,6 +78,9 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.5'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.5'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.5'
+
+    // Brainstem Pilot Library
+    implementation 'org.brainstemfirst:pilot-ftc:0.1.0-SNAPSHOT'
 }
 
 // Brainstem Pilot's JSON lives next to the Java it describes so the Pilot UI can
