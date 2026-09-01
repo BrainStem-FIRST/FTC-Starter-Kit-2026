@@ -1,7 +1,9 @@
 {
   "schemaVersion": 2,
-  "id": "Example_Variant_Auto",
-  "name": "Example Variant Auto",
+  "id": "Example_Auto",
+  "created_date": "2026-09-01T01:26:27.605Z",
+  "updated_date": "2026-09-01T01:34:59.845Z",
+  "name": "Example Auto",
   "sequence": [
     {
       "id": "cmd-1786573945662-l0mca",
@@ -20,6 +22,5 @@
   "units": "in",
   "headingUnit": "deg",
   "speedUnit": "in/s",
-  "accelUnit": "in/s²",
-  "updated_date": "2026-09-01T01:26:25.087Z"
+  "accelUnit": "in/s²"
 }

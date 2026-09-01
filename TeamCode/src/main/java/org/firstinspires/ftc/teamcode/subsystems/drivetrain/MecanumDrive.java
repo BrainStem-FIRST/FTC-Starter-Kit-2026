@@ -8,17 +8,19 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.PoseVelocity2dDual;
 import com.acmerobotics.roadrunner.Time;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.LazyHardwareMapImu;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.brainstemfirst.pilot.ftc.model.PilotDrive;
 import org.firstinspires.ftc.teamcode.utils.misc.BatteryVoltageFilter;
 import java.util.LinkedList;
 
 @Config
-public class MecanumDrive {
+public class MecanumDrive implements PilotDrive {
 
     public static class Params {
         // IMU orientation
@@ -38,6 +40,7 @@ public class MecanumDrive {
     public final LazyImu lazyImu;
     public final Localizer localizer;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
+    private PoseVelocity2d lastVelRobot = new PoseVelocity2d(new Vector2d(0, 0), 0);
     private final BatteryVoltageFilter batteryVoltageFilter;
 
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
@@ -63,6 +66,23 @@ public class MecanumDrive {
         batteryVoltageFilter = BatteryVoltageFilter.getInstance(hardwareMap);
         localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
     }
+
+    @Override
+    public Pose2d getPose() {
+        return localizer.getPose();
+    }
+
+    @Override
+    public PoseVelocity2d lastVelRobot() {
+        return lastVelRobot;
+    }
+
+    @Override
+    public double maxAngVel() {
+        return PARAMS.maxAngVel;
+    }
+
+    @Override
     public void setDrivePowers(PoseVelocity2d powers) {
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
                 PoseVelocity2dDual.constant(powers, 1));
@@ -87,6 +107,7 @@ public class MecanumDrive {
 
     public PoseVelocity2d updatePoseEstimate() {
         PoseVelocity2d vel = localizer.update();
+        lastVelRobot = vel;
         poseHistory.add(localizer.getPose());
         while (poseHistory.size() > 100)
             poseHistory.removeFirst();

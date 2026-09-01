@@ -24,6 +24,7 @@ plugins {
 // google() repository beginning with version 3.2 of the Android Gradle Plugin
 allprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
         google()
         // Sloth, Slothboard (FTC Dashboard fork) and the Sloth build of Panels.

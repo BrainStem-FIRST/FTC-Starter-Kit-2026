@@ -8,6 +8,8 @@ import org.brainstemfirst.pilot.ftc.PilotOpMode;
 import org.brainstemfirst.pilot.ftc.bezier.follower.BezierFollowerConfig;
 import org.brainstemfirst.pilot.ftc.model.PilotAlliance;
 import org.brainstemfirst.pilot.ftc.model.PilotDrive;
+import org.firstinspires.ftc.teamcode.BrainSTEMRobot;
+import org.firstinspires.ftc.teamcode.utils.misc.Drawing;
 
 /**
  * TEAM-OWNED — Brainstem Pilot UI creates this file once and will not overwrite it.
@@ -18,6 +20,8 @@ import org.brainstemfirst.pilot.ftc.model.PilotDrive;
  * {@code MecanumDrive.PARAMS}, not here.
  */
 public abstract class PilotAutoBase extends PilotOpMode {
+    protected BrainSTEMRobot robot;
+
     protected PilotAutoBase(String autoId) {
         super(autoId);
         configureFollower();
@@ -44,13 +48,13 @@ public abstract class PilotAutoBase extends PilotOpMode {
 
     @Override
     protected void setupRobot(PilotAlliance alliance, Pose2d startPose) {
-        // Construct your robot and seed odometry to startPose.
+        robot = new BrainSTEMRobot(hardwareMap, telemetry, startPose);
+        robot.drive.localizer.setPose(startPose);
     }
 
     @Override
     protected PilotDrive getDrive() {
-        // Return your drivetrain. Road Runner MecanumDrive can implement PilotDrive.
-        throw new IllegalStateException("Implement getDrive() in PilotAutoBase");
+        return robot.drive;
     }
 
     @Override
@@ -60,11 +64,12 @@ public abstract class PilotAutoBase extends PilotOpMode {
 
     @Override
     protected boolean updateRobot(TelemetryPacket packet) {
-        // Subsystem loop + localizer update. Return true to keep running.
+        robot.update();
         return true;
     }
 
     @Override
     protected void drawRobot(Canvas canvas) {
+        Drawing.drawRobot(canvas, robot.drive.getPose());
     }
 }
