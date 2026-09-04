@@ -23,6 +23,9 @@ repositories {
     mavenCentral()
     google()
     maven {
+        url = 'https://brainstem-first.github.io/Brainstem-Pilot-UI/maven'
+    }
+    maven {
         url = 'https://maven.brott.dev/'
     }
 }
@@ -60,7 +63,7 @@ dependencies {
 
     // BrainSTEM Pilot Library. Exclude vanilla Dashboard so it does not clash
     // with the Slothboard fork declared above.
-    implementation('org.brainstemfirst:pilot-ftc:0.1.0-SNAPSHOT') {
+    implementation('org.brainstemfirst:pilot-ftc:2026.1.0') {
         exclude group: 'com.acmerobotics.dashboard'
     }
 }
