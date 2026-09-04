@@ -33,17 +33,20 @@ public abstract class PilotAutoBase extends PilotOpMode {
         BezierFollowerConfig.velKv = 0.014;
         BezierFollowerConfig.velKs = 0.03;
         BezierFollowerConfig.velKp = 0.05;
-        BezierFollowerConfig.crossTrackKp = 0.05;
-        BezierFollowerConfig.speedkP = 0.05;
-        BezierFollowerConfig.speedkF = 0.05;
-        BezierFollowerConfig.speedkD = 0.0;
-        BezierFollowerConfig.correctivePower = 0.7;
-        BezierFollowerConfig.headingkP = 0.05;
-        BezierFollowerConfig.headingkF = 0.05;
+
         BezierFollowerConfig.overrideCruiseVel = false;
         BezierFollowerConfig.cruiseVel = 30;
         BezierFollowerConfig.overrideProfileDecel = false;
         BezierFollowerConfig.profileDecel = 40;
+
+        BezierFollowerConfig.crossTrackKp = 0.05;
+        BezierFollowerConfig.correctivePower = 0.7;
+        BezierFollowerConfig.headingkP = 0.05;
+        BezierFollowerConfig.headingkF = 0.05;
+
+        BezierFollowerConfig.speedkP = 0.05;
+        BezierFollowerConfig.speedkF = 0.05;
+        BezierFollowerConfig.speedkD = 0.0;
     }
 
     @Override
