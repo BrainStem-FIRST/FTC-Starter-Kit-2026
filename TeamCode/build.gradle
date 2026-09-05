@@ -69,7 +69,7 @@ dependencies {
 }
 
 /* BrainSTEM Pilot's JSON lives next to the Java it describes so the Pilot UI can
-edit both in one place, but PilotAssetLoader reads it out of the APK's assets
+edit both in one place, but BrainstemPilot reads it out of the APK's assets
 at runtime. Mirror it across before every build. */
 tasks.register('syncBrainstemPilotAssets', Sync) {
     from('src/main/java/org/firstinspires/ftc/teamcode/brainstemPilotAuto') {

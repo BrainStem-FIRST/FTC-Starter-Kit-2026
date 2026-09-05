@@ -15,12 +15,11 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.brainstemfirst.pilot.ftc.model.PilotDrive;
 import org.firstinspires.ftc.teamcode.utils.misc.BatteryVoltageFilter;
 import java.util.LinkedList;
 
 @Config
-public class MecanumDrive implements PilotDrive {
+public class MecanumDrive {
 
     public static class Params {
         // IMU orientation
@@ -67,22 +66,18 @@ public class MecanumDrive implements PilotDrive {
         localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
     }
 
-    @Override
     public Pose2d getPose() {
         return localizer.getPose();
     }
 
-    @Override
     public PoseVelocity2d lastVelRobot() {
         return lastVelRobot;
     }
 
-    @Override
     public double maxAngVel() {
         return PARAMS.maxAngVel;
     }
 
-    @Override
     public void setDrivePowers(PoseVelocity2d powers) {
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
                 PoseVelocity2dDual.constant(powers, 1));
