@@ -63,7 +63,7 @@ dependencies {
 
     // BrainSTEM Pilot Library. Exclude vanilla Dashboard so it does not clash
     // with the Slothboard fork declared above.
-    implementation('org.brainstemfirst:pilot-ftc:2026.1.0') {
+    implementation('org.brainstemfirst:pilot-ftc:2026.1.1') {
         exclude group: 'com.acmerobotics.dashboard'
     }
 }

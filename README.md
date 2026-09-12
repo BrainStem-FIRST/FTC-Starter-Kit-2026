@@ -1,106 +1,55 @@
 # FTC Starter Kit
 
-An FTC robot controller project for the DECODE (2025-2026) season, built on FTC
-SDK 11.2.1 with Sloth hot reload, FTC Dashboard, Panels, and Brainstem Pilot
-wired in.
+An FTC robot controller project for the current season: SDK 11.2.1 plus Sloth
+hot reload, FTC Dashboard, Panels, and BrainSTEM Pilot.
 
-This is the stock FTC SDK project — `FtcRobotController` library module plus
-`TeamCode` app module, Groovy Gradle scripts — with those tools added on top
-rather than swapped in as a different project template. Everything added lives
-in `TeamCode`; `FtcRobotController` is untouched, so season SDK updates can be
-merged straight from upstream. See
+This is the stock FTC SDK (`FtcRobotController` + `TeamCode`) with those tools
+added in `TeamCode` only. `FtcRobotController` is untouched so season SDK
+updates can be merged from upstream. See
 [Updating for a new season](#updating-for-a-new-season).
 
-For the FTC SDK's own documentation and release notes, see the
-[upstream FtcRobotController repo](https://github.com/FIRST-Tech-Challenge/FtcRobotController),
-and [ftc-docs](https://ftc-docs.firstinspires.org) for the Android Studio and
-Blocks/OnBot Java tutorials.
+SDK docs: [FtcRobotController](https://github.com/FIRST-Tech-Challenge/FtcRobotController)
+· [ftc-docs](https://ftc-docs.firstinspires.org)
 
 ## Features
 
-- **Sloth hot-reload** — push code changes to the robot in under a second.
-- **Panels** and **FTC Dashboard** — both supported side by side for live
-  telemetry, tuning, and field visualization.
-- **Brainstem Pilot** — JSON-driven autonomous routine builder, so autos can be
-  assembled/edited without touching any code.
-- Mecanum drive with a custom Bezier-curve path follower.
+- **Sloth** — push TeamCode changes to the robot in under a second
+- **Panels** and **FTC Dashboard** — live telemetry, tuning, and field view
+- **BrainSTEM Pilot** — JSON-driven autonomous builder
+- Mecanum drive with a Bézier path follower
 
 ## Requirements
 
-- **JDK 17 or later** to run the build. Android Studio's bundled JDK satisfies
-  this; command-line builds need `JAVA_HOME` pointed at one.
-- **Gradle 8.14.5**, pinned in `gradle/wrapper/gradle-wrapper.properties`. Do
-  not bump this to Gradle 9 — see [Why Gradle 8](#why-gradle-8).
+- **JDK 17+** (Android Studio’s bundled JDK is fine)
+- **Gradle 8.14.5** — pinned in `gradle/wrapper/gradle-wrapper.properties`. Do
+  not bump to Gradle 9 until Sloth supports it
 
 ## Sloth
 
-[Sloth](https://github.com/Dairy-Foundation/Sloth) is a hot-reload/OTA deploy
-tool for FTC. Instead of building and installing a full APK every time you
-change TeamCode, Sloth pushes just your changed classes to the robot -
-typically in under a second, versus 30-60+ seconds for a full install.
+[Sloth](https://github.com/Dairy-Foundation/Sloth) hot-reloads classes under
+`org.firstinspires.ftc.teamcode` instead of installing a full APK. Gradle
+files, new dependencies, or anything outside that package still need a normal
+full install.
 
-Sloth only hot-reloads classes in `org.firstinspires.ftc.teamcode` (and
-subpackages). Anything else - gradle files, new dependencies, non-TeamCode
-code - requires a normal full install before Sloth can pick up further
-changes correctly.
+**Setup (once)**
 
-### One-time Android Studio setup
+1. In the `TeamCode` run configuration, set **Module** to the option that is
+   not `<no module>`.
+2. Do one full `TeamCode` install.
+3. After that, use **Sloth Load** (`.run/Sloth Load.run.xml` →
+   `:TeamCode:deploySloth`).
 
-1. Set the run configuration's module: edit the `TeamCode` configuration,
-   under "Module" pick the option that is **not** `<no module>`.
-2. Do one full install using the `TeamCode` run configuration.
-3. Use the bundled **Sloth Load** run configuration (`.run/Sloth Load.run.xml`,
-   which runs `:TeamCode:deploySloth`) for fast iteration from then on.
-4. Optionally, in the `TeamCode` run configuration, add
-   `:TeamCode:removeSlothRemote` as a "Before launch" Gradle task ordered
-   before the install step. The Sloth plugin already wires this in front of
-   `installDebug`, so this is only needed if you install by some other route.
-5. Fall back to the full `TeamCode` install whenever you change gradle files,
-   add a dependency, or touch anything outside
-   `org.firstinspires.ftc.teamcode`.
-
-See the [Sloth README](https://github.com/Dairy-Foundation/Sloth#gradle-tasks)
-for task screenshots if you get stuck.
-
-### Deploying
-
-Both the `TeamCode` install and `deploySloth` talk to the robot over `adb`, so
-the Control Hub has to be connected first. `adb: no devices/emulators found`
-means exactly that — nothing is attached.
-
-- **USB**: plug into the Control Hub's USB-C port.
-- **Wi-Fi**: join the robot's network, then
-  `adb connect 192.168.43.1:5555` (Control Hub) or
-  `adb connect 192.168.49.1:5555` (phone RC).
-
-Confirm with `adb devices` before running any Gradle deploy task.
-
-### Why Gradle 8
-
-Gradle 9.0 removed the `Project.exec(Action)` API, which Sloth 0.2.4 (the
-current release) still calls. On Gradle 9 every adb-backed Sloth task fails
-immediately with:
-
-```
-Unable to find method 'org.gradle.process.ExecResult org.gradle.api.Project.exec(org.gradle.api.Action)'
-```
-
-Because the Sloth plugin wires `removeSlothRemote` in front of `installDebug`,
-this breaks the ordinary Run button too, not just `deploySloth`. The wrapper is
-therefore pinned to 8.14.5. Revisit only once Sloth ships a release that drops
-the removed API.
+Connect the Control Hub over USB-C, or Wi-Fi then
+`adb connect 192.168.43.1:5555` (Control Hub) /
+`adb connect 192.168.49.1:5555` (phone RC). Confirm with `adb devices`.
 
 ## Panels + FTC Dashboard
 
-Both [Panels](https://panels.bylazar.com) and FTC Dashboard are wired in, using
-their Sloth-compatible forks (`com.bylazar.sloth:fullpanels` and
-`com.acmerobotics.slothboard:dashboard`) so both hot-reload along with your
-code. Do not add the non-Sloth versions of either alongside these — they clash
-at package level.
-
-For the same reason, `com.acmerobotics.roadrunner:ftc` and
-`:actions` are declared with `exclude group: 'com.acmerobotics.dashboard'`,
-since they pull in the vanilla Dashboard transitively.
+Both [Panels](https://panels.bylazar.com) and FTC Dashboard are wired in via
+Sloth-compatible forks so they hot-reload with your code. Do not add the
+vanilla artifacts alongside these — they clash at package level. Road Runner
+is already declared with `exclude group: 'com.acmerobotics.dashboard'` for the
+same reason.
 
 - **Panels**: `http://192.168.43.1:8001` (Control Hub) or
   `http://192.168.49.1:8001` (Phone RC)
@@ -109,9 +58,8 @@ since they pull in the vanilla Dashboard transitively.
 
 ### Tunable values
 
-Annotate a class with both `@Configurable` (Panels) and `@Config` (FTC
-Dashboard) to make its `public static` fields tunable live from either UI -
-they're separate systems, so both annotations are needed:
+Use both `@Configurable` (Panels) and `@Config` (Dashboard) — they are separate
+systems:
 
 ```java
 import com.acmerobotics.dashboard.config.Config;
@@ -128,9 +76,7 @@ public class RobotConstants {
 
 ### Telemetry
 
-Route telemetry through `PanelsTelemetry` and a combined FTC `Telemetry`
-(Driver Station + Dashboard) so one `.update()` call reaches all three
-destinations:
+One `update()` reaches Panels, Dashboard, and the Driver Station:
 
 ```java
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -146,43 +92,22 @@ panelsTelemetry.addData("Example", "value");
 panelsTelemetry.update(dashboardAndDs);
 ```
 
-(`PanelsTelemetry` is a Kotlin `object`, so from Java it's accessed via
-`.INSTANCE`.)
+(`PanelsTelemetry` is a Kotlin `object`, so from Java use `.INSTANCE`.)
 
-## Brainstem Pilot
+## BrainSTEM Pilot
 
-Brainstem Pilot lets you build autonomous routines from JSON assets (paths,
-skeletons, variants) instead of writing them by hand in Java. The JSON files
-live under
+BrainSTEM Pilot is a visual editor for autonomous routines. You draw paths and
+autos in the app; this project runs the exported JSON and generated OpModes on
+the robot.
+
+JSON lives under
 `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/brainstemPilotAuto/`
-and are synced into `TeamCode/src/main/assets/brainstemPilotAuto/`
-automatically before every build (see `syncBrainstemPilotAssets` in
-`TeamCode/build.gradle`), where `BrainstemPilot` reads them
-at runtime.
+and is copied into APK assets on every build. Generated OpModes under
+`opmodeAutos/` are not meant to be hand-edited.
 
-An autonomous OpMode is just a thin subclass of `PilotAutoBase` naming which
-variant to run - see the generated example at
-`brainstemPilotAuto/opmodeAutos/ExampleVariantAuto.java`:
-
-```java
-package org.firstinspires.ftc.teamcode.brainstemPilotAuto.opmodeAutos;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import org.firstinspires.ftc.teamcode.utils.pilotAutoBuilder.PilotAutoBase;
-
-@Autonomous(name = "Example Variant Auto", group = "Pilot")
-public class ExampleVariantAuto extends PilotAutoBase {
-    public ExampleVariantAuto() {
-        super("Example_Variant_Auto");
-    }
-}
-```
-
-`PilotAutoBase` handles setup (Dashboard telemetry, alliance selection,
-`BrainstemPilot.initialize(...)`) and, on start, builds and runs the
-`Action` sequence described by the named variant's JSON. Classes marked
-`AUTO-GENERATED by Brainstem Pilot UI` under `opmodeAutos/` aren't meant to be
-hand-edited - regenerate them from the JSON instead.
+- **App**: [brainstem-first.github.io/Brainstem-Pilot-UI](https://brainstem-first.github.io/Brainstem-Pilot-UI/)
+- **Docs**: [Install + FTC guide](https://brainstem-first.github.io/Brainstem-Pilot-UI/docs/)
+- **GitHub**: [BrainStem-FIRST/Brainstem-Pilot-UI](https://github.com/BrainStem-FIRST/Brainstem-Pilot-UI)
 
 ## Project layout
 
@@ -190,61 +115,52 @@ hand-edited - regenerate them from the JSON instead.
 TeamCode/src/main/java/org/firstinspires/ftc/teamcode/
 ├── opmodes/                     TeleOp/Autonomous entry points
 ├── subsystems/drivetrain/       MecanumDrive, Pinpoint localizer
-├── brainstemPilotAuto/          Brainstem Pilot JSON assets + generated autos
+├── brainstemPilotAuto/          BrainSTEM Pilot JSON + generated autos
 └── utils/
-    ├── bezierCurveDrive/        Custom Bezier-curve path follower
-    ├── pilotAutoBuilder/        Brainstem Pilot runtime (reads the JSON assets)
-    ├── math/                    Geometry/math helpers
-    └── misc/                    Alliance, telemetry, battery filtering, etc.
+    ├── bezierCurveDrive/        Bézier path follower
+    ├── pilotAutoBuilder/        Pilot runtime
+    ├── math/
+    └── misc/
 ```
 
 ## Where the build config lives
 
 | File | What it holds |
 | --- | --- |
-| `settings.gradle` | Dairy Foundation repo, for the Sloth plugin |
+| `settings.gradle` | Dairy Foundation repo (Sloth plugin) |
 | `build.gradle` (root) | Sloth plugin version; Dairy + Road Runner repos |
-| `TeamCode/build.gradle` | Sloth plugin, all added dependencies, Java 17 override, `syncBrainstemPilotAssets` |
-| `build.dependencies.gradle` | FTC SDK artifacts only — shared with `FtcRobotController`, so don't add TeamCode-only libraries here |
+| `TeamCode/build.gradle` | Added dependencies, Java 17, `syncBrainstemPilotAssets` |
+| `build.dependencies.gradle` | FTC SDK artifacts only — do not add TeamCode libraries here |
 
-`TeamCode` overrides `build.common.gradle`'s Java 8 / API 30 defaults to Java 17
-and `compileSdk 34`, because `PathFollowerUtils` uses a record. This only
-affects the language level of TeamCode's own code, not the API level the robot
-runs.
+`TeamCode` overrides `build.common.gradle` to Java 17 and `compileSdk 34`
+because `PathFollowerUtils` uses a record. That does not change the API level
+the robot runs.
 
 ## Updating for a new season
 
-The repo has upstream configured, so a season SDK release is a merge, not a
-rewrite:
+1. Merge the new SDK (do not hand-edit FTC versions):
 
-```bash
-git fetch upstream
-git merge upstream/master
-```
+   ```bash
+   git fetch upstream
+   git merge upstream/master
+   ```
 
-A season release bumps the FTC artifact versions in
-`build.dependencies.gradle`, bumps `versionCode`/`versionName` in
-`FtcRobotController/src/main/AndroidManifest.xml` (which `build.common.gradle`
-scrapes to stamp the APK), swaps the sample OpModes, and sometimes moves the
-AGP and Gradle wrapper versions — so hand-editing dependency coordinates isn't
-enough.
+2. On conflicts in `build.gradle`, `settings.gradle`, and
+   `TeamCode/build.gradle`, keep **both** sides. For `README.md`, keep ours:
 
-Expect conflicts in `build.gradle`, `settings.gradle`, and
-`TeamCode/build.gradle`; keep both sides in each. `README.md` also conflicts
-whenever the SDK updates its release notes, since this file replaced the SDK's
-readme at the same path — keep this one with
-`git checkout --ours README.md && git add README.md` (upstream's is always
-readable on
-[their repo](https://github.com/FIRST-Tech-Challenge/FtcRobotController)). Then
-check:
+   ```bash
+   git checkout --ours README.md && git add README.md
+   ```
 
-- If the new `build.common.gradle` sets `compileSdk` above 34, drop the
-  override in `TeamCode/build.gradle` instead of letting it lower the value.
-- If the merge bumps the Gradle wrapper to 9.x, re-pin it to 8.14.5 unless
-  Sloth has been updated by then.
-- Sloth, Slothboard, Panels, and Road Runner are unaffected by the FTC merge
-  and need their own bumps. The three Sloth-flavored artifacts are cross-pinned
-  through their `0.2.4+...` versions and must move in lockstep.
-- Brainstem Pilot path JSON describes this season's field and is yours to
-  redraw. The Java is season-agnostic — `FieldConstants` only does
-  alliance/side mirroring.
+   Upstream’s readme is always on
+   [FtcRobotController](https://github.com/FIRST-Tech-Challenge/FtcRobotController).
+
+3. After the merge, check:
+
+   - If `build.common.gradle` sets `compileSdk` above 34, drop the override in
+     `TeamCode/build.gradle`.
+   - If the wrapper jumps to Gradle 9, re-pin `8.14.5` unless Sloth already
+     supports 9.
+   - Bump Sloth, Slothboard, and Panels together (they share the `0.2.4+…`
+     pin). The FTC merge does not update them.
+   - Redraw Pilot field JSON for the new game. The Java is season-agnostic.
